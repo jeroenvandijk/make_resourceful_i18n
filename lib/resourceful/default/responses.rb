@@ -58,7 +58,7 @@ module Resourceful
           end
 
           response_for(:show_fails) do |format|
-            not_found = Proc.new { render :text => "No item found", :status => 404 }
+            not_found = Proc.new { render :text => translate("show_fails"), :status => 404 }
             format.html &not_found
             format.js &not_found
             format.xml &not_found
@@ -66,7 +66,7 @@ module Resourceful
 
           response_for(:create) do |format|
             format.html do
-              set_default_flash(:notice, "Create successful!")
+              set_default_flash :notice, translate_action("create")
               set_default_redirect object_path
             end
             format.js
@@ -74,7 +74,7 @@ module Resourceful
           
           response_for(:create_fails) do |format|
             format.html do
-              set_default_flash :error, "There was a problem!"
+              set_default_flash :error, translate_action("create_fails")
               render :action => :new, :status => 422
             end
             format.js
@@ -82,7 +82,7 @@ module Resourceful
         
           response_for(:update) do |format|
             format.html do
-              set_default_flash :notice, "Save successful!"
+              set_default_flash :notice, translate_action("update")
               set_default_redirect object_path
             end
             format.js
@@ -90,7 +90,7 @@ module Resourceful
           
           response_for(:update_fails) do |format|
             format.html do
-              set_default_flash :error, "There was a problem saving!"
+              set_default_flash :error, translate_action("update_fails")
               render :action => :edit, :status => 422
             end
             format.js
@@ -98,7 +98,7 @@ module Resourceful
           
           response_for(:destroy) do |format|
             format.html do
-              set_default_flash :notice, "Record deleted!"
+              set_default_flash :notice, translate_action("destroy")
               set_default_redirect objects_path
             end
             format.js
@@ -106,13 +106,20 @@ module Resourceful
           
           response_for(:destroy_fails) do |format|
             format.html do
-              set_default_flash :error, "There was a problem deleting!"
+              set_default_flash :error, translate_action("destroy_fails")
               set_default_redirect :back, :status => :failure
             end
             format.js
           end
         end
       end
+
+			# Utility method to get the translation for the action
+			def translate_action(action_name)
+				translation = I18n.t "actioncontroller.actions.#{current_model_name}.#{action_name}", 
+														:default => I18n.t("actioncontroller.actions.default.#{action_name}")
+			end
+
     end
   end
 end

@@ -1,0 +1,11 @@
+en:
+  actioncontroller:
+    actions:
+      default:
+        show_fails: No item found
+        create: Create successful!
+        create_fails: There was a problem!
+        update: Save successful!
+        update_fails: There was a problem saving!
+        destroy: Record deleted!
+        destroy_fails: There was a problem deleting!

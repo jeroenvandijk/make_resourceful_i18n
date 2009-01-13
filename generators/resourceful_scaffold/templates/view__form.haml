@@ -1,5 +1,9 @@
-<%- for attribute in attributes -%>
-%p
-  %label{:for => "<%= singular_name %>_<%= attribute.name %>"} <%= attribute.column.human_name %>:
-  = f.<%= attribute.field_type %> :<%= attribute.name %>
-<% end -%>
+= error_messages_for :<%= singular_name %>
+
+- form_for(@<%= singular_name %>) do |f|
+  <%- for attribute in attributes -%>
+  %p
+    %label{:for => "<%= singular_name %>_<%= attribute.name %>"} <%= attribute.column.human_name %>:
+    = f.<%= attribute.field_type %> :<%= attribute.name %>
+  <% end -%>
+  %p= submit_tag (@<%= singular_name %>.new_record? "Save" : "Update")

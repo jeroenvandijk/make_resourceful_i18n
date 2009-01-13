@@ -1,10 +1,6 @@
 %h1 Editing <%= singular_name %>
 
-= error_messages_for :<%= singular_name %>
-
-- form_for(:<%= singular_name %>, :url => object_url, :html => { :method => :put }) do |f|
-  = render :partial => "form", :locals => {:f => f}
-  %p= submit_tag "Update"
+= render :partial => "form", :locals => {:f => f}
 
 = link_to 'Show', object_path
 |
