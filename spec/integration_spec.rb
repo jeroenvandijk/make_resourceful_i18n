@@ -12,6 +12,18 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
     @object = @objects.first
     Thing.stubs(:find).returns(@object)
     Thing.stubs(:new).returns(@object)
+		
+		@translations = {}
+		@translations[:show_fails] = "No record found!"
+    @translations[:create] =  "Created succesfull!"
+    @translations[:create_fails] =  "There was a problem while saving!"
+    @translations[:update] =  "Successfully saved!"
+    @translations[:update_fails] =  "Something went wrong during the update"
+    @translations[:destroy] =  "Record deleted!"
+    @translations[:destroy_fails] =  "Something went wrong during deletion!"
+		
+		@translations.each { |translation| I18n.backend.store_translations("en", {:actioncontroller => {:actions => {:default => @translations} } } ) }
+
   end
 
   ## Default responses
@@ -134,7 +146,7 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
   it "should set an appropriate flash notice for a successful POST /things" do
     Thing.stubs(:new).returns(@object)
     post :create
-    flash[:notice].should == "Create successful!"
+    flash[:notice].should == @translations[:create]
   end
 
   it "should redirect to the new object for a successful POST /things" do
@@ -147,7 +159,7 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
     Thing.stubs(:new).returns(@object)
     @object.stubs(:save).returns(false)
     post :create
-    flash[:error].should == "There was a problem!"
+    flash[:error].should == @translations[:create_fails]
   end
 
   it "should give a failing response for an unsuccessful POST /things" do
@@ -193,7 +205,7 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
   it "should set an appropriate flash notice for a successful PUT /things/12" do
     Thing.stubs(:find).returns(@object)
     put :update, :id => 12
-    flash[:notice].should == "Save successful!"
+    flash[:notice].should == @translations[:update]
   end
 
   it "should redirect to the updated object for a successful PUT /things/12" do
@@ -206,7 +218,7 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
     Thing.stubs(:find).returns(@object)
     @object.stubs(:update_attributes).returns(false)
     put :update, :id => 12
-    flash[:error].should == "There was a problem saving!"
+    flash[:error].should == @translations[:update_fails]
   end
 
   it "should give a failing response for an unsuccessful PUT /things/12" do
@@ -252,7 +264,7 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
   it "should set an appropriate flash notice for a successful DELETE /things/12" do
     Thing.stubs(:find).returns(@object)
     delete :destroy, :id => 12
-    flash[:notice].should == "Record deleted!"
+    flash[:notice].should == @translations[:destroy]
   end
 
   it "should redirect to the object list for a successful DELETE /things/12" do
@@ -265,7 +277,7 @@ describe "ThingsController", "with all the resourceful actions", :type => :integ
     Thing.stubs(:find).returns(@object)
     @object.stubs(:destroy).returns(false)
     delete :destroy, :id => 12
-    flash[:error].should == "There was a problem deleting!"
+    flash[:error].should == @translations[:destroy_fails]
   end
 
   it "should give a failing response for an unsuccessful DELETE /things/12" do

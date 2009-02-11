@@ -41,7 +41,9 @@ module Resourceful
     # for providing customized model lookup logic.
     module Accessors
       # Returns an array of all the objects of the model corresponding to the controller.
-      # For UsersController, it essentially runs <tt>User.find(:all)</tt>.
+      # For UsersController, it essentially runs <tt>User.find(:all)</tt>. A new feature
+			# is that if User responds to find_by_params it will use that method instead to get the right
+			# objects and still following the skinny controller, fat model idea.
       #
       # However, there are a few important differences.
       # First, this method caches is results in the <tt>@current_objects</tt> instance variable.
@@ -51,7 +53,11 @@ module Resourceful
       # which provides a lot of flexibility
       # (see the documentation for current_model for details).
       def current_objects
-        @current_objects ||= current_model.find(:all)
+        unless @current_objects
+					@current_objects = current_model.find_by_params(params) if current_model.respond_to?(:find_by_params) # 
+					@current_objects ||= current_model.find(:all)
+				end
+				@current_objects
       end
 
       # Calls current_objects and stores

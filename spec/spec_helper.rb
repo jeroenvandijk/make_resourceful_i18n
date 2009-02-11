@@ -40,9 +40,9 @@ end
 def stub_const(name)
   unless Object.const_defined?(name)
     obj = Object.new
-    obj.extend Spec::MetaClass
-    obj.metaclass.send(:define_method, :to_s) { name.to_s }
-    obj.metaclass.send(:alias_method, :inspect, :to_s)
+    # obj.extend Spec::MetaClass
+    #  obj.metaclass.send(:define_method, :to_s) { name.to_s }
+    #  obj.metaclass.send(:alias_method, :inspect, :to_s)
     Object.const_set(name, obj)
   end
   Object.const_get(name)
@@ -78,6 +78,8 @@ module ControllerMocks
   def mock_controller(*to_extend)
     mock_kontroller
     @controller = @kontroller.new
+		@controller.stubs(:translate_action)
+		@controller.stubs(:translate)
     to_extend.each(&@controller.method(:extend))
   end
 
@@ -157,7 +159,6 @@ module RailsMocks
   def init_kontroller(options)
     @kontroller = Class.new ActionController::Base
     @kontroller.extend Resourceful::Maker
-    @kontroller.extend Spec::MetaClass
 
     @kontroller.metaclass.send(:define_method, :controller_name) { options[:name] }
     @kontroller.metaclass.send(:define_method, :controller_path) { options[:name] }

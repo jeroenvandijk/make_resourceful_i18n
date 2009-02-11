@@ -195,6 +195,39 @@ describe Resourceful::Default::URLs, " for a controller with a parent object" do
     @controller.expects(:send).with('person_url', model)
     @controller.parent_url model
   end
+
+	it "should raise errors when nested_object_path is called when there is no current_object"
+	it "should test the underlying structure more, errors are not detected"
+	## TODO these test have a lot of duplication, we should make it DRY
+
+	describe "with a option hash for extra parameters" do
+
+		before :each do
+			@options = { :status_id => 4, :user_ids => [1,2,3,4,5]}
+		end
+		
+		it "should get the nested path of current_object with #nested_object_path" do
+	    @controller.expects(:send).with('person_thing_path', @person, @object, @options)
+	    @controller.nested_object_path(@options)
+	  end
+
+	  it "should get the nested url of current_object with #nested_object_url" do
+	    @controller.expects(:send).with('person_thing_url', @person, @object, @options)
+	    @controller.nested_object_url(@options)
+	  end
+
+	  it "should get the nested path of the passed object with #nested_object_path" do
+	    object = stub_model('Thing')
+	    @controller.expects(:send).with('person_thing_path', @person, object, @options)
+	    @controller.nested_object_path(object, @options)
+	  end
+
+	  it "should get the nested url of the passed object with #nested_object_url" do
+	    object = stub_model('Thing')
+	    @controller.expects(:send).with('person_thing_url', @person, object, @options)
+	    @controller.nested_object_url(object, @options)
+	  end
+	end
 end
 
 describe Resourceful::Default::URLs, " for a controller within a namespace" do
@@ -274,5 +307,106 @@ describe Resourceful::Default::URLs, " for a controller with a parent object and
   it "should get the new path of the current model and its parent with #new_object_path" do
     @controller.expects(:send).with('new_admin_main_thing_path', @person)
     @controller.new_object_path
+  end
+end
+
+describe Resourceful::Default::URLs, " with a option hash for extra parameters" do
+  include ControllerMocks
+  before :each do
+    mock_controller Resourceful::Default::URLs
+    @object = stub_model('Thing')
+    @controller.stubs(:current_object).returns(@object)
+		
+    @controller.stubs(:current_model_name).returns('Thing')
+    @controller.stubs(:parent?).returns(false)
+    @controller.stubs(:namespaces).returns([])
+
+		@options = { :status_id => 4, :user_ids => [1,2,3,4,5]}
+  end
+
+  it "should get the path of current_object with #object_path" do
+    @controller.expects(:send).with('thing_path', @object, @options)
+    @controller.object_path(@object, @options)
+  end
+
+  it "should get the url of current_object with #object_url" do
+    @controller.expects(:send).with('thing_url', @object, @options)
+    @controller.object_url(@object, @options)
+  end
+
+  it "should get the path of the passed object with #object_path" do
+    model = stub_model('Thing')
+    @controller.expects(:send).with('thing_path', model, @options)
+    @controller.object_path(model, @options)
+  end
+
+  it "should get the url of the passed object with #object_url" do
+    model = stub_model('Thing')
+    @controller.expects(:send).with('thing_url', model, @options)
+    @controller.object_url(model, @options)
+  end
+
+  it "should get the path of current_object with #nested_object_path" do
+    @controller.expects(:send).with('thing_path', @object, @options)
+    @controller.nested_object_path(@object, @options)
+  end
+
+  it "should get the url of current_object with #nested_object_url" do
+    @controller.expects(:send).with('thing_url', @object, @options)
+    @controller.nested_object_url(@object, @options)
+  end
+
+  it "should get the path of the passed object with #nested_object_path" do
+    model = stub_model('Thing')
+    @controller.expects(:send).with('thing_path', model, @options)
+    @controller.nested_object_path(model, @options)
+  end
+
+  it "should get the url of the passed object with #nested_object_url" do
+    model = stub_model('Thing')
+    @controller.expects(:send).with('thing_url', model, @options)
+    @controller.nested_object_url(model, @options)
+  end
+
+  it "should get the edit path of current_object with #edit_object_path" do
+    @controller.expects(:send).with('edit_thing_path', @object, @options)
+    @controller.edit_object_path(@object, @options)
+  end
+
+  it "should get the edit url of current_object with #edit_object_url" do
+    @controller.expects(:send).with('edit_thing_url', @object, @options)
+    @controller.edit_object_url(@object, @options)
+  end
+
+  it "should get the edit path of the passed object with #edit_object_path" do
+    model = stub_model('Thing')
+    @controller.expects(:send).with('edit_thing_path', model, @options)
+    @controller.edit_object_path(model, @options)
+  end
+
+  it "should get the edit url of the passed object with #edit_object_url" do
+    model = stub_model('Thing')
+    @controller.expects(:send).with('edit_thing_url', model, @options)
+    @controller.edit_object_url(model, @options)
+  end
+
+  it "should get the plural path of the current model with #objects_path" do
+    @controller.expects(:send).with('things_path', @options)
+    @controller.objects_path(@options)
+  end
+
+  it "should get the plural url of the current model with #objects_url" do
+    @controller.expects(:send).with('things_url', @options)
+    @controller.objects_url(@options)
+  end
+
+  it "should get the new path of the current model with #new_object_path" do
+    @controller.expects(:send).with('new_thing_path', @options)
+    @controller.new_object_path(@options)
+  end
+
+  it "should get the new url of the current model with #new_object_url" do
+    @controller.expects(:send).with('new_thing_url', @options)
+    @controller.new_object_url(@options)
   end
 end
