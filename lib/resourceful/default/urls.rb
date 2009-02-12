@@ -194,16 +194,16 @@ module Resourceful
 			
 			# TODO change specs
 			def nested_collection_route(name, type, action = nil, options = {})
-				return collection_route(type, action, options) unless parent?
+				return collection_route(name, type, action, options) unless parent?
         send_with_options("#{action ? action + '_' : ''}#{helper_prefix(:nested => true)}#{name}_#{type}", parent_object, options)
 			end
 
 
 			# Convenience methods to extract options and arguments from the url helpers
 			def send_with_options(*args)
-				options = args.extract_options!
+        options = args.extract_options!
 
-				send( *(args + (options.empty? ? [] : [options] ) ).flatten )
+        send( *(args + (options.empty? ? [] : [options] ) ).flatten )
 			end
 
 			def extract_object_plus_options(args, options = {})

@@ -201,6 +201,7 @@ describe Resourceful::Default::URLs, " for a controller with a parent object" do
 	## TODO these test have a lot of duplication, we should make it DRY
 	it "should have #new_nested_object_path"
 	it "should have #edit_nested_object_path"
+	it "should test nested collections vs collections"
 	
 
 	describe "with a option hash for extra parameters" do
