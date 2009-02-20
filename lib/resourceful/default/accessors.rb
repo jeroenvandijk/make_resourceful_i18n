@@ -54,7 +54,8 @@ module Resourceful
       # (see the documentation for current_model for details).
       def current_objects
         unless @current_objects
-					@current_objects = current_model.find_by_params(params) if current_model.respond_to?(:find_by_params) # 
+					# raise params.keys.inspect + parent_name
+					@current_objects = current_model.find_by_params(params.reject{|key, _| key.gsub('_id', '') == parent_name }) if current_model.respond_to?(:find_by_params) # 
 					@current_objects ||= current_model.find(:all)
 				end
 				@current_objects

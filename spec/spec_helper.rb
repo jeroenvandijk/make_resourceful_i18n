@@ -1,7 +1,7 @@
 $: << File.dirname(__FILE__) + '/../lib'
 
 require 'rubygems'
-%w[spec rails/version action_pack active_record resourceful/maker
+%w[spec yaml rails/version action_pack active_record resourceful/maker
    action_controller action_controller/test_process action_controller/integration
    spec/rspec-rails/redirect_to spec/rspec-rails/render_template].each &method(:require)
 

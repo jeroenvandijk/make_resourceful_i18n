@@ -77,11 +77,11 @@ module Resourceful
       #
       #   nested_objects_path       #=> "/people/42/hats"
       #   person_hats_path(@person) #=> "/people/42/hats"
-			# 
-			# When there is no parent the following path will be returned:
-			#
-			#   nested_objects_path       #=> "/hats"
-			#   hats_path                 #=> "/hats"
+      # 
+      # When there is no parent the following path will be returned:
+      #
+      #   nested_objects_path       #=> "/hats"
+      #   hats_path                 #=> "/hats"
       # 
       def nested_objects_path(*args); nested_objects_route('path', args.extract_options!); end
 
@@ -116,12 +116,12 @@ module Resourceful
 
       # This returns the path for the parent object.
       def parent_path(*args)
-				object, options = extract_object_plus_options(args, :object => parent_object)
+        object, options = extract_object_plus_options(args, :object => parent_object)
         instance_route(parent_class_name.underscore, object, 'path', nil, options)
       end
       # Same as parent_path, but with the protocol and hostname.
       def parent_url(*args)
-				object, options = extract_object_plus_options(args, :object => parent_object)
+        object, options = extract_object_plus_options(args, :object => parent_object)
         instance_route(parent_class_name.underscore, object, 'url', nil, options)
       end
 
@@ -138,12 +138,12 @@ module Resourceful
       #   url_helper_prefix #=> "admin_content_"
       #
       # Then object_path is the same as <tt>admin_content_page_path(current_object)</tt>.
-			# TODO change documentation
+      # TODO change documentation
       def url_helper_prefix
-				namespaces.empty? ? '' : "#{namespaces.join('_')}_"
+        namespaces.empty? ? '' : "#{namespaces.join('_')}_"
       end
 
-			
+      
 
       # This prefix is added to the Rails URL helper names
       # for the make_resourceful collection URL helpers,
@@ -153,30 +153,30 @@ module Resourceful
       # and the empty string otherwise.
       #
       # See also url_helper_prefix.
-			# Deprecated
+      # Deprecated
       # def collection_url_prefix
       #   parent? ? "#{parent_class_name.underscore}_" : ''
       # end
-			def collection_url_prefix
-				parent? ? "#{parent_class_name.underscore}_" : ""
-			end
+      def collection_url_prefix
+        parent? ? "#{parent_class_name.underscore}_" : ""
+      end
 
       private
 
-      def object_route(type, object, options);							instance_route(singular_name, object, type, nil, options); end
-      def nested_object_route(type, object, options);				nested_instance_route(singular_name, object, type, nil, options); end
+      def object_route(type, object, options);              instance_route(singular_name, object, type, nil, options); end
+      def nested_object_route(type, object, options);       nested_instance_route(singular_name, object, type, nil, options); end
 
-      def new_object_route(type, options);									collection_route(singular_name, type, "new", options); end
-			def new_nested_object_route(type, options); 					nested_collection_route(singular_name, type, "edit", options); end
+      def new_object_route(type, options);                  collection_route(singular_name, type, "new", options); end
+      def new_nested_object_route(type, options);           nested_collection_route(singular_name, type, "new", options); end
 
-      def edit_object_route(type, object, options); 				instance_route(singular_name, object, type, "edit", options); end
-			def edit_nested_object_route(type, object, options); 	nested_instance_route(singular_name, object, type, "edit", options); end
+      def edit_object_route(type, object, options);         instance_route(singular_name, object, type, "edit", options); end
+      def edit_nested_object_route(type, object, options);  nested_instance_route(singular_name, object, type, "edit", options); end
 
-      def objects_route(type, options); 										collection_route(plural_name, type, nil, options); end
-      def nested_objects_route(type, options);							nested_collection_route(plural_name, type, nil, options); end
+      def objects_route(type, options);                     collection_route(plural_name, type, nil, options); end
+      def nested_objects_route(type, options);              nested_collection_route(plural_name, type, nil, options); end
 
 
-			# Abstractions
+      # Abstractions
       def instance_route(name, object, type, action = nil, options = {})
         send_with_options("#{action ? action + '_' : ''}#{helper_prefix}#{name}_#{type}", object, options)
       end
@@ -185,45 +185,45 @@ module Resourceful
         send_with_options("#{action ? action + '_' : ''}#{helper_prefix}#{name}_#{type}", options)
       end
 
-			# TODO change specs
-			def nested_instance_route(name, object, type, action = nil, options = {})
-				return instance_route(name, object, type, action, options) unless parent?
+      # TODO change specs
+      def nested_instance_route(name, object, type, action = nil, options = {})
+        return instance_route(name, object, type, action, options) unless parent?
 
         send_with_options("#{action ? action + '_' : ''}#{helper_prefix(:nested => true)}#{name}_#{type}", parent_object, object, options)
-			end
-			
-			# TODO change specs
-			def nested_collection_route(name, type, action = nil, options = {})
-				return collection_route(name, type, action, options) unless parent?
+      end
+      
+      # TODO change specs
+      def nested_collection_route(name, type, action = nil, options = {})
+        return collection_route(name, type, action, options) unless parent?
         send_with_options("#{action ? action + '_' : ''}#{helper_prefix(:nested => true)}#{name}_#{type}", parent_object, options)
-			end
+      end
 
 
-			# Convenience methods to extract options and arguments from the url helpers
-			def send_with_options(*args)
+      # Convenience methods to extract options and arguments from the url helpers
+      def send_with_options(*args)
         options = args.extract_options!
 
         send( *(args + (options.empty? ? [] : [options] ) ).flatten )
-			end
+      end
 
-			def extract_object_plus_options(args, options = {})
-				args_options = args.extract_options!
-				# return the arguments [object, options]
-				[args.size == 1 ? args.first : (options[:object] || current_object) ] + [args_options]
-			end
-			# Helper used in the routes below
-			def helper_prefix(options = {})
-				url_helper_prefix +
-				(options[:nested] ? collection_url_prefix : "")
-			end
-			
-			def singular_name
-				current_model_name.underscore
-			end
-			
-			def plural_name
-				singular_name.pluralize
-			end
+      def extract_object_plus_options(args, options = {})
+        args_options = args.extract_options!
+        # return the arguments [object, options]
+        [args.size == 1 ? args.first : (options[:object] || current_object) ] + [args_options]
+      end
+      # Helper used in the routes below
+      def helper_prefix(options = {})
+        url_helper_prefix +
+        (options[:nested] ? collection_url_prefix : "")
+      end
+      
+      def singular_name
+        current_model_name.underscore
+      end
+      
+      def plural_name
+        singular_name.pluralize
+      end
     end
   end
 end
