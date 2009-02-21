@@ -13,7 +13,7 @@ module Resourceful
       #   hat_path(@hat) #=> "/hats/12"
       #   hat_path(@hat, :status => 1) #=> "/hats/12?status=1"
       # 
-      def object_path(*args); object_route(object, 'path', *extract_object_plus_options(args)); end
+      def object_path(*args); object_route('path', *extract_object_plus_options(args)); end
       # Same as object_path, but with the protocol and hostname.
       def object_url (*args); object_route('url', *extract_object_plus_options(args)); end
 
