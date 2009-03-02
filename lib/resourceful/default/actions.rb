@@ -26,8 +26,6 @@ module Resourceful
         #load_object
         before :show
         response_for :show
-      rescue
-        response_for :show_fails
       end
 
       # POST /foos
