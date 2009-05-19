@@ -16,8 +16,14 @@ module Resourceful
       #--
       # TODO: Move this out of here
       #++
-      def set_default_flash(type, message)
-        flash[type] ||= (params[:_flash] && params[:_flash][type]) || message
+      def set_default_flash(type, message, options = {})
+        flash_message = (params[:_flash] && params[:_flash][type]) || message
+
+        if options[:now]
+          flash.now[type] ||= flash_message
+        else
+          flash[type] ||= flash_message
+        end
       end
 
       # Sets the default redirect
@@ -52,10 +58,18 @@ module Resourceful
       # It sets up the default responses for the default actions.
       def self.included(base)
         base.made_resourceful do
-          response_for(:show, :index, :edit, :new) do |format|
+          response_for(:show, :edit, :new) do |format|
             format.html
             format.js
+            format.json { render :json => current_object.to_json }
           end
+
+          response_for(:index) do |format|
+            format.html
+            format.js
+            format.json { render :json => current_objects.to_json }
+          end
+
 
           response_for(:show_fails) do |format|
             not_found = Proc.new { render :text => translate("show_fails"), :status => 404 }
@@ -69,15 +83,15 @@ module Resourceful
               set_default_flash :notice, translate_action("create")
               set_default_redirect object_path
             end
-            format.js
+            format.js { set_default_flash :notice, translate_action("create"), :now => true }
           end
           
           response_for(:create_fails) do |format|
             format.html do
-              set_default_flash :error, translate_action("create_fails")
+              set_default_flash :error, translate_action("create_fails"), :now => true
               render :action => :new, :status => 422
             end
-            format.js
+            format.js { set_default_flash :error, translate_action("create_fails"), :now => true }
           end
         
           response_for(:update) do |format|
@@ -85,7 +99,7 @@ module Resourceful
               set_default_flash :notice, translate_action("update")
               set_default_redirect object_path
             end
-            format.js
+            format.js { set_default_flash :notice, translate_action("update"), :now => true }
           end
           
           response_for(:update_fails) do |format|
@@ -93,7 +107,7 @@ module Resourceful
               set_default_flash :error, translate_action("update_fails")
               render :action => :edit, :status => 422
             end
-            format.js
+            format.js { set_default_flash :error, translate_action("update_fails"), :now => true }
           end
           
           response_for(:destroy) do |format|
@@ -101,7 +115,7 @@ module Resourceful
               set_default_flash :notice, translate_action("destroy")
               set_default_redirect objects_path
             end
-            format.js
+            format.js { set_default_flash :notice, translate_action("destroy"), :now => true }
           end
           
           response_for(:destroy_fails) do |format|
@@ -109,10 +123,11 @@ module Resourceful
               set_default_flash :error, translate_action("destroy_fails")
               set_default_redirect :back, :status => :failure
             end
-            format.js
+            format.js { set_default_flash :error, translate_action("destroy_fails"), :now => true }
           end
         end
       end
+
 
 			# Utility method to get the translation for the action
 			def translate_action(action_name)
