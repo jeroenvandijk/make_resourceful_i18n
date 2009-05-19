@@ -93,10 +93,10 @@ module Resourceful
       # For example, if Person has_one Hat,
       # then in HatsController current_object essentially runs <tt>Person.find(params[:person_id]).hat</tt>.
       def current_object
-        @current_object ||= if !parent? || plural?
-          current_model.find(params[:id]) if params[:id]
+        @current_object ||= if plural?
+          current_model.find(params[:id])
         else
-          parent_object.send(instance_variable_name.singularize)
+          parent_object.send(instance_variable_name.singularize) || raise(ActiveRecord::RecordNotFound)
         end
       end
 
@@ -254,31 +254,7 @@ module Resourceful
       #
       # FIXME - Perhaps this logic should be moved to parent?() or another init method
       def parent_name
-        return @parent_name if defined?(@parent_name)
-        @parent_name = parent_names.find { |name| params["#{name}_id"] }
-        if @parent_name.nil?
-          # get any polymorphic parents through :as association inspection
-          names = params.reject { |key, value| key.to_s[/_id$/].nil? }.keys.map { |key| key.chomp("_id") }
-          names.each do |name|
-            begin
-              klass = name.camelize.constantize
-              id = params["#{name}_id"]
-              object = klass.find(id)
-              if association = object.class.reflect_on_all_associations.detect { |association| association.options[:as] && parent_names.include?(association.options[:as].to_s) }
-                @parent_name = name
-                @polymorphic_parent_name = association.options[:as].to_s
-                @parent_class_name = name.camelize
-                @parent_object = object
-                break
-              end
-            rescue
-            end
-          end
-        else
-          @parent_class_name = params["#{parent_name}_type"]
-          @polymorphic_parent = !@parent_class_name.nil?
-        end
-        @parent_name
+        @parent_name ||= parent_names.find { |name| params["#{name}_id"] }
       end
       
       def polymorphic_parent_name
@@ -387,7 +363,11 @@ module Resourceful
       # Note that the way this is determined is based on the singularity of the controller name,
       # so it may yield false positives for oddly-named controllers and need to be overridden.
       def singular?
-        instance_variable_name.singularize == instance_variable_name
+        if parent?
+          parent_object.respond_to?(instance_variable_name.singularize)
+        else
+          instance_variable_name.singularize == instance_variable_name
+        end
       end
 
       # Returns whether the controller is a normal plural controller,
